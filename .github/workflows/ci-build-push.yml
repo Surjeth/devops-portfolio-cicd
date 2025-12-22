@@ -25,25 +25,24 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: us-east-1
 
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build Docker image
-        run: |
-          docker build -t devops-portfolio-app:latest ./app
+        run: docker build -t devops-portfolio-app:latest ./app
 
       - name: Tag Docker image for ECR
         run: |
           ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
           docker tag devops-portfolio-app:latest \
-            $ACCOUNT_ID.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:latest
+            ${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/devops-portfolio-app:latest
           docker tag devops-portfolio-app:latest \
-            $ACCOUNT_ID.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+            ${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/devops-portfolio-app:${GITHUB_SHA}
 
       - name: Push Docker image to ECR
         run: |
           ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-          docker push $ACCOUNT_ID.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:latest
-          docker push $ACCOUNT_ID.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+          docker push ${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/devops-portfolio-app:latest
+          docker push ${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/devops-portfolio-app:${GITHUB_SHA}
