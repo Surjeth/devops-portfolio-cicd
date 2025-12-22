@@ -1,29 +1,13 @@
-terraform {
-  required_version = ">= 1.5.0"
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
-
-provider "aws" {
-  region = "us-east-1"
-}
-
 # -----------------------------
 # ECR Repository
 # -----------------------------
 resource "aws_ecr_repository" "app" {
-  name = "devops-portfolio-app"
+  name         = "${var.project_name}-app"
+  force_delete = true
 
   image_scanning_configuration {
     scan_on_push = true
   }
-
-  force_delete = true
 }
 
 # -----------------------------
@@ -42,10 +26,10 @@ resource "aws_iam_openid_connect_provider" "github" {
 }
 
 # -----------------------------
-# IAM Role for GitHub Actions (OIDC)
+# IAM Role for GitHub Actions
 # -----------------------------
 resource "aws_iam_role" "github_actions" {
-  name = "github-actions-ecr-role"
+  name = "${var.project_name}-github-actions-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -58,8 +42,7 @@ resource "aws_iam_role" "github_actions" {
         Action = "sts:AssumeRoleWithWebIdentity"
         Condition = {
           StringLike = {
-            # 🔑 Flexible but secure (correct fix)
-            "token.actions.githubusercontent.com:sub" = "repo:${var.github_repo}:*"
+            "token.actions.githubusercontent.com:sub" = "repo:${var.github_repo}:ref:refs/heads/main"
           }
         }
       }
@@ -71,7 +54,7 @@ resource "aws_iam_role" "github_actions" {
 # IAM Policy for ECR Push
 # -----------------------------
 resource "aws_iam_policy" "ecr_push" {
-  name = "github-actions-ecr-policy"
+  name = "${var.project_name}-ecr-push-policy"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -81,10 +64,9 @@ resource "aws_iam_policy" "ecr_push" {
         Action = [
           "ecr:GetAuthorizationToken",
           "ecr:BatchCheckLayerAvailability",
-          "ecr:BatchGetImage",
-          "ecr:InitiateLayerUpload",
-          "ecr:UploadLayerPart",
           "ecr:CompleteLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:InitiateLayerUpload",
           "ecr:PutImage"
         ]
         Resource = "*"
@@ -93,18 +75,7 @@ resource "aws_iam_policy" "ecr_push" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "attach" {
+resource "aws_iam_role_policy_attachment" "ecr_attach" {
   role       = aws_iam_role.github_actions.name
   policy_arn = aws_iam_policy.ecr_push.arn
-}
-
-# -----------------------------
-# Outputs (REQUIRED FOR CI)
-# -----------------------------
-output "ecr_repository_url" {
-  value = aws_ecr_repository.app.repository_url
-}
-
-output "github_actions_role_arn" {
-  value = aws_iam_role.github_actions.arn
 }
