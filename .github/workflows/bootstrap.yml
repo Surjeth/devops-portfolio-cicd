@@ -10,18 +10,22 @@ permissions:
 jobs:
   bootstrap:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: aws-actions/configure-aws-credentials@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
 
-      - uses: hashicorp/setup-terraform@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init & Apply (Bootstrap)
+        working-directory: ./bootstrap
         run: |
-          cd bootstrap
           terraform init
           terraform apply -auto-approve
