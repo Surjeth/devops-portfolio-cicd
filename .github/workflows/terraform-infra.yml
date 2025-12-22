@@ -8,8 +8,9 @@ permissions:
   contents: read
 
 jobs:
-  terraform:
+  infra:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -20,7 +21,7 @@ jobs:
 
       - uses: hashicorp/setup-terraform@v3
 
-      - name: Terraform Apply (Infra)
+      - name: Terraform Init & Apply (Infra)
         working-directory: terraform
         run: |
           terraform init
