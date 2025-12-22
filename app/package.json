@@ -1,0 +1,13 @@
+{
+    "name": "devops-portfolio-static-app",
+    "version": "1.0.0",
+    "description": "Minimal Node.js static website for DevOps CI/CD portfolio",
+    "main": "server.js",
+    "scripts": {
+      "start": "node server.js"
+    },
+    "dependencies": {
+      "express": "^4.19.2"
+    }
+  }
+  
