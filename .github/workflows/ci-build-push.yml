@@ -12,7 +12,6 @@ permissions:
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: devops-portfolio-app
-  IMAGE_NAME: devops-portfolio-app
 
 jobs:
   build-and-push:
@@ -32,17 +31,19 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build Docker image
-        working-directory: app
         run: |
-          docker build \
-            -t $IMAGE_NAME:${{ github.sha }} .
+          docker build -t devops-portfolio-app:latest ./app
 
-      - name: Tag image for ECR
+      - name: Tag Docker image for ECR
         run: |
-          docker tag $IMAGE_NAME:${{ github.sha }} \
-          ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          docker tag devops-portfolio-app:latest \
+            $ACCOUNT_ID.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:latest
+          docker tag devops-portfolio-app:latest \
+            $ACCOUNT_ID.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
 
-      - name: Push image to ECR
+      - name: Push Docker image to ECR
         run: |
-          docker push \
-          ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          docker push $ACCOUNT_ID.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:latest
+          docker push $ACCOUNT_ID.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
