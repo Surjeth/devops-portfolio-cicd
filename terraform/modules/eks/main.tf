@@ -8,7 +8,9 @@ module "eks" {
   vpc_id     = var.vpc_id
   subnet_ids = var.private_subnets
 
-  # 🚫 NO encryption block at all
+  cluster_encryption_config = {}
+  create_kms_key            = false
+  create_cloudwatch_log_group = false
 
   eks_managed_node_groups = {
     default = {

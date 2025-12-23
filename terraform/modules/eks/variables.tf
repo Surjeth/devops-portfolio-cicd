@@ -13,3 +13,8 @@ variable "vpc_id" {
 variable "private_subnets" {
   type = list(string)
 }
+
+variable "enable_cluster_encryption" {
+  type    = bool
+  default = false
+}
