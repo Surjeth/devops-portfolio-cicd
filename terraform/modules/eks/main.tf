@@ -8,7 +8,7 @@ module "eks" {
   vpc_id     = var.vpc_id
   subnet_ids = var.private_subnets
 
-  cluster_encryption_config = var.cluster_encryption_config
+  # 🚫 NO encryption block at all
 
   eks_managed_node_groups = {
     default = {
