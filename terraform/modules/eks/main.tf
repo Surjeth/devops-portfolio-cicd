@@ -8,6 +8,8 @@ module "eks" {
   vpc_id     = var.vpc_id
   subnet_ids = var.private_subnets
 
+  cluster_encryption_config = var.cluster_encryption_config
+
   eks_managed_node_groups = {
     default = {
       desired_size   = 2

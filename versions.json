@@ -1,0 +1,20 @@
+{
+    "Objects": [
+        {
+            "Key": "infra/terraform.tfstate",
+            "VersionId": "P3lq0DtkZoaso3y8DJkFDLACfZP6s.fp"
+        },
+        {
+            "Key": "infra/terraform.tfstate",
+            "VersionId": "BpKCBbuu.9f67Jr01bqxMXNgPt5Fs3LH"
+        },
+        {
+            "Key": "infra/terraform.tfstate",
+            "VersionId": "0bt_odzH9Quz3dGAZ0zo1Cf7luZs20az"
+        },
+        {
+            "Key": "infra/terraform.tfstate",
+            "VersionId": "vXOF0rCGBUV.Le4hL7cepxYfnJK51wc."
+        }
+    ]
+}
