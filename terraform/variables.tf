@@ -15,3 +15,10 @@ variable "github_repo" {
   type        = string
   default     = "Surjeth/devops-portfolio-cicd"
 }
+
+variable "cluster_version" {
+  description = "EKS Kubernetes version"
+  type        = string
+  default     = "1.29"
+}
+

@@ -74,3 +74,5 @@ resource "aws_iam_role_policy_attachment" "ecr_attach" {
   role       = aws_iam_role.github_actions.name
   policy_arn = aws_iam_policy.ecr_push.arn
 }
+
+
